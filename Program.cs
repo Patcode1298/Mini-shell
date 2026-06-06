@@ -73,7 +73,13 @@ public class Program
             else if (command == "list")
             {
                 string[] files = Directory.GetFiles(currentDirectory, "*.txt");
-                Console.WriteLine("Files:");
+                string[] folders = Directory.GetDirectories(currentDirectory);
+                Console.WriteLine("Folders:");
+                foreach (string folder in folders)
+                {
+                    Console.WriteLine("[" + Path.GetFileName(folder) + "]");
+                }
+                Console.WriteLine("\nFiles:");
                 foreach (string file in files)
                 {
                     Console.WriteLine(Path.GetFileNameWithoutExtension(file));
@@ -245,17 +251,37 @@ public class Program
     {
         try
         {
-            string fullPath = currentDirectory + "\\" + foldername;
-            
-            if (Directory.Exists(fullPath))
+            if (foldername == ".")
             {
-                currentDirectory = fullPath;
-                Console.WriteLine($"Entered folder: {foldername}");
-                Console.WriteLine("Current location: " + currentDirectory);
+                if (currentDirectory == "files")
+                {
+                    Console.WriteLine("Cannot go above the files directory.");
+                }
+                else
+                {
+                    int lastBackslash = currentDirectory.LastIndexOf("\\");
+                    if (lastBackslash > 0)
+                    {
+                        currentDirectory = currentDirectory.Substring(0, lastBackslash);
+                        Console.WriteLine("Went up one directory");
+                        Console.WriteLine("Current location: " + currentDirectory);
+                    }
+                }
             }
             else
             {
-                Console.WriteLine($"Folder '{foldername}' not found.");
+                string fullPath = currentDirectory + "\\" + foldername;
+                
+                if (Directory.Exists(fullPath))
+                {
+                    currentDirectory = fullPath;
+                    Console.WriteLine($"Entered folder: {foldername}");
+                    Console.WriteLine("Current location: " + currentDirectory);
+                }
+                else
+                {
+                    Console.WriteLine($"Folder '{foldername}' not found.");
+                }
             }
         }
         catch (Exception ex)
