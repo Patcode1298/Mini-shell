@@ -4,9 +4,12 @@ using System.Collections.Generic;
 
 public class Program
 {
+    private static string currentDirectory = "files";
+
     public static void Main(string[] args)
     {
         string consoleTitle = Console.Title;
+        
 
 
         Console.WriteLine("Welcome to the mini shell! See help for commands");
@@ -20,9 +23,9 @@ public class Program
                 Console.WriteLine("Filename:");
                 string filename = Console.ReadLine();
 
-                if (File.Exists("files\\"+filename+".txt"))
+                if (File.Exists(currentDirectory+"\\"+filename+".txt"))
                 {
-                    Console.WriteLine(File.ReadAllText("files\\"+filename+".txt"));
+                    Console.WriteLine(File.ReadAllText(currentDirectory+"\\"+filename+".txt"));
                 }
                 else
                 {
@@ -33,7 +36,7 @@ public class Program
             {
                 Console.WriteLine("Filename:");
                 string filename = Console.ReadLine();
-                File.Create("files\\"+filename+".txt").Close();
+                File.Create(currentDirectory+"\\"+filename+".txt").Close();
                 Console.WriteLine($"{filename} created");
 
             }
@@ -41,9 +44,9 @@ public class Program
             {
                 Console.WriteLine("Filename:");
                 string filetodelete = Console.ReadLine();
-                if (File.Exists("files\\"+filetodelete+".txt"))
+                if (File.Exists(currentDirectory+"\\"+filetodelete+".txt"))
                 {
-                    File.Delete("files\\"+filetodelete+".txt");
+                    File.Delete(currentDirectory+"\\"+filetodelete+".txt");
                     Console.WriteLine($"{filetodelete} deleted");
                 }
                 else
@@ -55,11 +58,11 @@ public class Program
             {
                 Console.WriteLine("Filename:");
                 string filetoedit = Console.ReadLine();
-                if (File.Exists("files\\"+filetoedit+".txt"))
+                if (File.Exists(currentDirectory+"\\"+filetoedit+".txt"))
                 {
                     Console.WriteLine("Enter the new content for the file:");
                     string newContent = Console.ReadLine();
-                    File.WriteAllText("files\\"+filetoedit+".txt", newContent);
+                    File.WriteAllText(currentDirectory+"\\"+filetoedit+".txt", newContent);
                     Console.WriteLine($"{filetoedit} edited");
                 }
                 else
@@ -69,12 +72,28 @@ public class Program
             }
             else if (command == "list")
             {
-                string[] files = Directory.GetFiles("files", "*.txt");
+                string[] files = Directory.GetFiles(currentDirectory, "*.txt");
                 Console.WriteLine("Files:");
                 foreach (string file in files)
                 {
                     Console.WriteLine(Path.GetFileNameWithoutExtension(file));
                 }
+            }
+            else if (command == "createdir")
+            {
+                Console.WriteLine("Foldername (use \\ for nested folders, e.g., folder1\\folder2):");
+                string foldername = Console.ReadLine();
+                CreateFolder(foldername);
+            }
+            else if (command == "go")
+            {
+                Console.WriteLine("Foldername:");
+                string foldername = Console.ReadLine();
+                GoToFolder(foldername);
+            }
+            else if (command == "locate")
+            {
+                Console.WriteLine($"Location: {currentDirectory}");
             }
             else if (command == "settings")
             {
@@ -173,7 +192,13 @@ public class Program
             {
                 Console.WriteLine("Commands:");
                 Console.WriteLine("help: Displays all available commands.");
-                Console.WriteLine("create, delete, read, list: Create, delete, display or list files");
+                Console.WriteLine("create: Creates .txt files");
+                Console.WriteLine("read: Reads the content of a file");
+                Console.WriteLine("delete: Deletes a file");
+                Console.WriteLine("list: Lists all files in the folder");
+                Console.WriteLine("createdir: Creates folders");
+                Console.WriteLine("go: Navigate into a folder");
+                Console.WriteLine("locate: Displays current location");
                 Console.WriteLine("settings: Shows the settings.");
                 Console.WriteLine("clear: Clears the console window");
                 Console.WriteLine("exit: Exits the program.");
@@ -199,6 +224,43 @@ public class Program
             {
                 Console.WriteLine("Unknown command");
             }
+        }
+    }
+
+    public static void CreateFolder(string foldername)
+    {
+        try
+        {
+            string fullPath = currentDirectory + "\\" + foldername;
+            Directory.CreateDirectory(fullPath);
+            Console.WriteLine($"Folder '{foldername}' created successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error creating folder: {ex.Message}");
+        }
+    }
+
+    public static void GoToFolder(string foldername)
+    {
+        try
+        {
+            string fullPath = currentDirectory + "\\" + foldername;
+            
+            if (Directory.Exists(fullPath))
+            {
+                currentDirectory = fullPath;
+                Console.WriteLine($"Entered folder: {foldername}");
+                Console.WriteLine("Current location: " + currentDirectory);
+            }
+            else
+            {
+                Console.WriteLine($"Folder '{foldername}' not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error entering folder: {ex.Message}");
         }
     }
 }

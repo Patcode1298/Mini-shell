@@ -3,8 +3,11 @@
 A small C# console "mini shell" that lets you create, read, edit, delete and list text files and adjust simple console settings.
 
 ## Features
-- Create/read/edit/delete text files stored under `files\{name}.txt`.
-- List all files in the `files` folder (names shown without extension).
+- Create/read/edit/delete text files stored in the current folder (within `files\` directory).
+- Create nested folder structures using the `createdir` command.
+- Navigate between folders using the `go` command.
+- Display the current folder path using the `locate` command.
+- List all files in the current folder (names shown without extension).
 - Settings menu to change console background color and window title.
 - Simple built-in commands: `help`, `clear`, `exit`.
 
@@ -36,7 +39,10 @@ The program shows a prompt; type commands (see below). Use `help` to list comman
 - `read` — display a file's contents (prompts for filename)
 - `edit` — replace a file's content (prompts for filename and new content)
 - `delete` — delete a file (prompts for filename)
-- `list` — list all `.txt` files in `files\` (names without extension)
+- `list` — list all `.txt` files in the current folder (names without extension)
+- `createdir` — create a new folder (prompts for folder name; supports nested paths with `\`, e.g., `folder1\folder2`)
+- `go` — navigate into a folder (prompts for folder name)
+- `locate` — display the current folder location
 - `settings` — open settings menu
   - `color` — change background color (options: `b`, `r`, `g`, `y`, `db`, `dr`, `dg`, `dy`, `d`)
   - `title` — change window title (prompts for title)
@@ -46,7 +52,11 @@ The program shows a prompt; type commands (see below). Use `help` to list comman
 
 ## Notes & Caveats
 - Files are read/written using the default .NET encoding.
-- The app concatenates strings with Windows-style paths (`files\\{name}.txt`). Ensure the `files` directory exists and the app has permission to access it.
+- All file and folder operations are relative to the current directory, which starts at `files\`.
+- The `go` command allows navigation within the `files` directory structure; folder existence is checked before navigation.
+- Use `locate` to view the current folder location.
+- Use `createdir` to create nested folder structures (e.g., `createdir subfolder\deepfolder` creates both levels).
+- The app uses Windows-style paths (`\`). Ensure the `files` directory exists and the app has permission to access it.
 - Color and title changes affect the current console window only; exiting resets colors in code when confirmed.
 
 ## Contributing
